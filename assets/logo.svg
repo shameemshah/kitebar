@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- ZerodhaBar kite glyph — matches the login callback page -->
+  <path d="M256 432 C 234 460, 290 472, 262 504" fill="none"
+        stroke="#8f929b" stroke-width="10" stroke-linecap="round"/>
+  <path d="M256 24 L432 208 L256 432 L80 208 Z" fill="#f6461a"/>
+  <path d="M256 24 L432 208 L256 432 Z" fill="rgba(0,0,0,.16)"/>
+  <path d="M256 24 V432 M80 208 H432"
+        stroke="rgba(255,255,255,.6)" stroke-width="10"/>
+</svg>
