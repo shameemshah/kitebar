@@ -25,3 +25,4 @@ dist/
 # local env files
 .env
 .env.*
+.git-zerodha-history-backup/
