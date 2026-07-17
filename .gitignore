@@ -1,0 +1,27 @@
+# virtualenv
+.venv/
+venv/
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# macOS
+.DS_Store
+
+# build outputs (py2app)
+build/
+dist/
+
+# session tooling
+.playwright-mcp/
+
+# never commit tokens or credentials (the app keeps them outside the repo,
+# but belt and braces)
+*token*.json
+*.secret
+
+# local env files
+.env
+.env.*
