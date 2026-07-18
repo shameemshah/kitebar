@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- ZerodhaBar app icon — kite on a dark rounded card -->
+  <rect width="512" height="512" rx="116" fill="#101013"/>
+  <g transform="rotate(-8 256 256)">
+    <path d="M256 352 C 238 380, 290 392, 264 428" fill="none"
+          stroke="#4a4c52" stroke-width="9" stroke-linecap="round"/>
+    <path d="M256 76 L396 220 L256 352 L116 220 Z" fill="#f6461a"/>
+    <path d="M256 76 L396 220 L256 352 Z" fill="rgba(0,0,0,.16)"/>
+    <path d="M256 76 V352 M116 220 H396"
+          stroke="rgba(255,255,255,.55)" stroke-width="7"/>
+  </g>
+</svg>

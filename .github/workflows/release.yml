@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: macos-14   # Apple Silicon runner
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check tag matches VERSION
+        run: |
+          VERSION=$(python3 -c "import re; print(re.search(r'^__version__ = \"([^\"]+)\"', open('kitebar/__init__.py').read(), re.M).group(1))")
+          if [ "v${VERSION}" != "${GITHUB_REF_NAME}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match __version__ ${VERSION} in kitebar/__init__.py"
+            exit 1
+          fi
+
+      - name: Build app and dmg
+        run: scripts/build.sh
+
+      - name: Sanity-check bundle
+        run: |
+          test -d dist/KiteBar.app
+          file dist/KiteBar.app/Contents/MacOS/KiteBar | grep -q arm64
+          /usr/libexec/PlistBuddy -c 'Print :LSUIElement' dist/KiteBar.app/Contents/Info.plist | grep -q true
+          ls dist/KiteBar-*.dmg
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" dist/KiteBar-*.dmg --generate-notes
+
+      - name: Update Homebrew tap
+        env:
+          TAP_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
+        run: |
+          if [ -z "${TAP_TOKEN}" ]; then
+            echo "::warning::TAP_GITHUB_TOKEN not set — skipping tap update. Bump Casks/kitebar.rb manually."
+            exit 0
+          fi
+          VERSION="${GITHUB_REF_NAME#v}"
+          SHA=$(shasum -a 256 "dist/KiteBar-${VERSION}.dmg" | awk '{print $1}')
+          git clone "https://x-access-token:${TAP_TOKEN}@github.com/shameemshah/homebrew-tap.git" tap
+          cd tap
+          sed -i '' \
+            -e "s|^  version \".*\"|  version \"${VERSION}\"|" \
+            -e "s|^  sha256 \".*\"|  sha256 \"${SHA}\"|" \
+            Casks/kitebar.rb
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -am "kitebar ${VERSION}"
+          git push

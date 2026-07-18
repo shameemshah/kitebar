@@ -131,7 +131,7 @@ python3 -m venv .venv
 
 ## First run
 
-Launch **KiteBar** (or from source: `.venv/bin/python kitebar.py`).
+Launch **KiteBar** (or from source: `.venv/bin/python -m kitebar`).
 
 1. On first launch you're prompted for your **API Key** and **API Secret**
    (from your app's page on developers.kite.trade). They're stored in the
@@ -144,7 +144,7 @@ Launch **KiteBar** (or from source: `.venv/bin/python kitebar.py`).
 Prefer the terminal for credentials (or if the dialog misbehaves)?
 
 ```sh
-.venv/bin/python kitebar.py --set-credentials
+.venv/bin/python -m kitebar --set-credentials
 ```
 
 It validates lengths as you type — Kite API keys are 16 characters and
@@ -176,7 +176,7 @@ remove. Logs: `~/Library/Application Support/KiteBar/agent.log`.
 | `Invalid checksum` on login | The stored API secret is wrong (must be exactly 32 chars). Re-enter with `--set-credentials`. |
 | Credential dialog won't accept typing | Fixed in-app by re-activating the app before showing dialogs; if it recurs, use `--set-credentials`. |
 | Crash mentioning `Info.plist` / `CFBundleIdentifier` | Run the `PlistBuddy` line from **Install**. |
-| `Port 8000 unavailable` during login | Something else is bound to 127.0.0.1:8000. Free it, or change `CALLBACK_PORT` in `kitebar.py` *and* your Kite app's redirect URL. |
+| `Port 8000 unavailable` during login | Something else is bound to 127.0.0.1:8000. Free it, or change `CALLBACK_PORT` in `kitebar/constants.py` *and* your Kite app's redirect URL. |
 | Totals differ from the Zerodha app by a tiny amount | LTP moves between fetches; the two apps refresh at different moments. |
 | Polling on an NSE holiday | Holidays aren't modelled; it polls like a weekday and prices simply don't move. |
 
@@ -222,8 +222,9 @@ holiday calendar, configurable poll interval, Intel/universal builds.
 
 ## Releasing (maintainers)
 
-1. Bump `VERSION` in `kitebar.py`, update `CHANGELOG.md`, commit.
-2. `git tag v<version> && git push origin main --tags`
+1. Bump `__version__` in `kitebar/__init__.py`, update `CHANGELOG.md`,
+   open a PR (main is protected), merge once `ci` is green.
+2. `git tag v<version> && git push origin v<version>` on the merged main.
 3. The release workflow builds the dmg on an M-series runner, publishes the
    GitHub Release, and bumps the cask in `shameemshah/homebrew-tap`
    (requires the `TAP_GITHUB_TOKEN` repo secret — a fine-grained PAT with
