@@ -3,6 +3,17 @@
 All notable changes to this project are documented here. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.0.2] - 2026-08-04
+
+### Fixed
+- HTTPS calls no longer die after the app has been running a few days.
+  `certifi` was bundled inside `python313.zip`, so its CA bundle was
+  extracted to a temp file that macOS purges after ~3 days of no access —
+  after which every API call (including the login token exchange) failed
+  with "Could not find a suitable TLS CA certificate bundle, invalid
+  path: /var/folders/…". certifi now ships unpacked in the app bundle so
+  the CA bundle is a permanent file.
+
 ## [0.0.1] - 2026-07-17
 
 First release as a packaged macOS app. (Entries below are from the earlier
