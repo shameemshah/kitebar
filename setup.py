@@ -10,7 +10,9 @@ OPTIONS = {
     "iconfile": "build/KiteBar.icns",
     "resources": ["assets"],
     # cffi/_cffi_backend (cryptography) and charset_normalizer (requests)
-    # are runtime imports py2app's scanner misses.
+    # are runtime imports py2app's scanner misses. certifi must ship as a
+    # real directory: zipped, its cacert.pem gets extracted to $TMPDIR,
+    # which macOS purges after ~3 days and every HTTPS call then fails.
     "packages": [
         "kitebar",
         "rumps",
@@ -18,6 +20,7 @@ OPTIONS = {
         "keyring",
         "cffi",
         "charset_normalizer",
+        "certifi",
     ],
     "includes": ["_cffi_backend"],
     "plist": {
