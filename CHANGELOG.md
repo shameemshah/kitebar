@@ -3,6 +3,14 @@
 All notable changes to this project are documented here. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.0.3] - 2026-11-02
+
+### Added
+- Day's P&L row near the bottom of the dropdown (above the "Updated" line),
+  showing the same figure as the menu-bar title — amount plus a percentage
+  badge, updated live while the menu is open. Shown on the All/Equity
+  views; private mode shows only the percentage.
+
 ## [0.0.2] - 2026-08-04
 
 ### Fixed

@@ -744,6 +744,51 @@ class KiteBarApp(rumps.App):
         self._place_summary_pnl(refs, content)
         self._row_refs["summary"] = refs
 
+    DAY_H = 34
+
+    def _day_content(self):
+        """Day's P&L row: the same figure as the menu-bar title."""
+        from AppKit import NSColor
+        day_total, pct = self._day_totals()
+        return {
+            "amount": ("" if self._private()
+                       else fmt_inr(day_total, 2, explicit_sign=True,
+                                    rupee=False)),
+            "pct": f"{pct:+.2f}%" if pct is not None else None,
+            "color": (NSColor.systemGreenColor() if day_total >= 0
+                      else soft_red()),
+        }
+
+    def _place_day_pnl(self, refs):
+        """Pct pill at the far right, the day amount beside it."""
+        content = self._day_content()
+        if refs.get("pill") is not None:
+            refs["pill"].removeFromSuperview()
+        right_edge = self.MENU_W - 14
+        refs["pill"] = None
+        if content["pct"] is not None:
+            pill = self._pct_pill(content["pct"], content["color"])
+            right_edge -= pill.frame().size.width
+            pill.setFrameOrigin_((right_edge, 6))
+            refs["view"].addSubview_(pill)
+            refs["pill"] = pill
+            right_edge -= 8
+        self._relabel(refs["amount"], content["amount"],
+                      color=content["color"], right_edge=right_edge)
+
+    def _build_day_pnl(self, view):
+        """Day's P&L                      +54,714.46 (+4.69%)"""
+        from AppKit import NSColor
+        self._place_left(view, self._mk_label(
+            "Day's P&L", 11, 0.0, NSColor.secondaryLabelColor(),
+            mono=False), 14, 9)
+        amount = self._mk_label("", 14, 0.4, NSColor.labelColor())
+        amount.setFrameOrigin_((0, 9))  # placed by _place_day_pnl
+        view.addSubview_(amount)
+        refs = {"view": view, "amount": amount, "pill": None}
+        self._place_day_pnl(refs)
+        self._row_refs["day"] = refs
+
     ROW_H = 64  # three-line Kite-style rows
 
     def _holding_segments(self, h):
@@ -980,6 +1025,8 @@ class KiteBarApp(rumps.App):
         try:
             if self._row_refs.get("summary"):
                 self._update_summary(self._row_refs["summary"])
+            if self._row_refs.get("day"):
+                self._place_day_pnl(self._row_refs["day"])
             by_symbol = {str(h.get("tradingsymbol", "?")): h
                          for h in self.holdings}
             for key, refs in self._row_refs.get("holdings", {}).items():
@@ -1014,7 +1061,7 @@ class KiteBarApp(rumps.App):
 
     def _rebuild_menu(self):
         self.menu.clear()
-        self._row_refs = {"summary": None, "holdings": {},
+        self._row_refs = {"summary": None, "day": None, "holdings": {},
                           "positions": {}, "mf": {}}
         flt = self._filter()
         show_equity = flt in ("all", "equity")
@@ -1074,6 +1121,10 @@ class KiteBarApp(rumps.App):
                 self._view_row(
                     key, self.ROW_H,
                     lambda view, f=f: self._build_mf(view, f))
+            self.menu.add(rumps.separator)
+
+        if show_equity and (self.holdings or self.positions):
+            self._view_row("Day's P&L", self.DAY_H, self._build_day_pnl)
             self.menu.add(rumps.separator)
 
         self._update_status_row()
