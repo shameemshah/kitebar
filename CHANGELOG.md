@@ -3,6 +3,14 @@
 All notable changes to this project are documented here. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.0.4] - 2026-11-20
+
+### Added
+- Invested amount on each live position row (bottom-left, before the
+  product and HOLDING tag), matching the holdings rows. Sold holdings and
+  closed positions have nothing invested, so they keep showing only the
+  product and tag. Masked in private mode.
+
 ## [0.0.3] - 2026-11-02
 
 ### Added
