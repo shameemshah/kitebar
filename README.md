@@ -41,8 +41,8 @@ This app uses those two calls and nothing else.
 - **Live while open**: the dropdown updates in place every 5 s during
   market hours — values tick without the menu closing or flickering.
 - **Positions too**: open and closed intraday/F&O positions (MIS/NRML/
-  CNC) in their own section with per-position P&L, and their
-  mark-to-market folded into the "today" figure — matching the Zerodha
+  CNC) in their own section with per-position P&L and invested amount,
+  and their mark-to-market folded into the "today" figure — matching the Zerodha
   app's Day's P&L.
 - **Mutual funds too**: your Coin portfolio (`kite.mf_holdings()`, also
   allowed on the free plan) gets its own section — units, avg NAV,

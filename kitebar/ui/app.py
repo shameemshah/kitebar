@@ -840,11 +840,20 @@ class KiteBarApp(rumps.App):
         m2m_key = "dim" if dim else ("green" if m2m >= 0 else "red")
         lbl_key = "faint" if dim else "dim"
         val_key = "dim" if dim else "label"
+        private = self._private()
         product = [(str(p.get("product", "")), lbl_key, False)]
         tag = self.POSITION_TAGS.get(state)
         if tag:
             product += [("  •  ", "faint", False), (tag[0], tag[1], False)]
-        private = self._private()
+        # money currently tied up — meaningless for exits (sold holdings,
+        # closed round-trips), so only live positions show it
+        if not dim:
+            invested = abs(qty) * avg * (p.get("multiplier") or 1)
+            product = [("Invested ", lbl_key, False),
+                       (PRIVATE_MASK if private
+                        else fmt_inr(invested, 2, rupee=False),
+                        val_key, False),
+                       ("  •  ", "faint", False)] + product
         return {
             "qty_avg": [("Qty. ", lbl_key, False),
                         ("••" if private else f"{qty:+d}", val_key, False),
